@@ -1,9 +1,7 @@
 package com.garycoffee.order.controller;
 
 import com.garycoffee.order.dto.RequestUpdateList;
-import com.garycoffee.order.dto.RequestUpdateProduct;
 import com.garycoffee.order.model.Product;
-import com.garycoffee.order.repo.ProductRepo;
 import com.garycoffee.order.services.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/products")
 @AllArgsConstructor
-public class productController {
+public class ProductController {
 
     @Autowired
     private ProductService productService;

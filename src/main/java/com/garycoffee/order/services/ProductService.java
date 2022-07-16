@@ -22,14 +22,11 @@ public class ProductService {
 
     public Product createProduct(Product product){
         productRepo.insert(product);
-        Product targetProduct = productRepo.findProductByProductName(product.getProductName());
+        Product targetProduct = productRepo.findProductByShortName(product.getShortName());
         return targetProduct;
     }
 
-    public Product getProductByProductName(String productName){
-        Product product = productRepo.findProductByProductName(productName);
-        return product;
-    }
+
 
     public Product getProductByShortName(String shortName){
         Product product = productRepo.findProductByShortName(shortName);
