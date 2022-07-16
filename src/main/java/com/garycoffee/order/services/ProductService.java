@@ -56,4 +56,12 @@ public class ProductService {
         }
     }
 
-}
+    public void deleteProduct(String shortName){
+            Product product = productRepo.findProductByShortName(shortName);
+            log.info("product: {} deleted", product.getShortName());
+            productRepo.delete(product);
+
+        }
+
+    }
+

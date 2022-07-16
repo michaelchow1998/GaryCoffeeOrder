@@ -60,4 +60,13 @@ public class productController {
         return ResponseEntity.ok().body(productList);
     }
 
+    @DeleteMapping("/{shortName}")
+    public ResponseEntity<String> deleteProduct(@PathVariable String shortName){
+
+        productService.deleteProduct(shortName);
+        String message = shortName + " already deleted";
+
+        return ResponseEntity.ok().body(message);
+    }
+
 }
