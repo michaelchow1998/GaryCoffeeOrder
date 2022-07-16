@@ -11,10 +11,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Product {
 
     @Id
-    private String Id;
+    private String id;
     @Indexed(unique = true)
     @JsonProperty("product_name")
     private String productName;
+
+    @Indexed(unique = true)
+    @JsonProperty("short_name")
+    private String shortName;
     private String location;
     private String bean;
 
@@ -24,8 +28,9 @@ public class Product {
     private Integer stock;
     private String description;
 
-    public Product(String productName, String location, String bean, String imageUrl, Integer price, Integer stock, String description) {
+    public Product(String productName, String shortName, String location, String bean, String imageUrl, Integer price, Integer stock, String description) {
         this.productName = productName;
+        this.shortName = shortName;
         this.location = location;
         this.bean = bean;
         this.imageUrl = imageUrl;

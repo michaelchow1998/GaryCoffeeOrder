@@ -10,5 +10,5 @@ public interface ProductRepo
 
     Product findProductByProductName(String productName);
 
-
+    Product findProductByShortName(String shortName);
 }
