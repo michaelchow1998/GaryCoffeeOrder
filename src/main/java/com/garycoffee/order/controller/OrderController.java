@@ -6,6 +6,7 @@ import com.garycoffee.order.model.Order;
 import com.garycoffee.order.model.Product;
 import com.garycoffee.order.services.OrderService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/orders")
 @AllArgsConstructor
+@Slf4j
 public class OrderController {
 
     @Autowired
@@ -29,7 +31,7 @@ public class OrderController {
         return ResponseEntity.created(uri).body(targetOrder);
     }
 
-    //Get All Products
+    //Get All Orders
     @GetMapping
     public ResponseEntity<List<Order>> fetchOrders(){
 
@@ -38,7 +40,16 @@ public class OrderController {
         return ResponseEntity.ok().body(orderList);
     }
 
-    //Get a Product by shortName
+    //Get All Orders by Phone
+    @GetMapping("/search")
+    public ResponseEntity<List<Order>> fetchOrdersByPhone(@RequestParam(value = "phone") String phone){
+        log.info(phone);
+        List<Order> orderList = orderService.getOrderByPhone(phone);
+
+        return ResponseEntity.ok().body(orderList);
+    }
+
+    //Get Order by id
     @GetMapping("/{id}")
     public ResponseEntity<Order> fetchOrderById(@PathVariable String id){
 
@@ -46,4 +57,7 @@ public class OrderController {
 
         return ResponseEntity.ok().body(order);
     }
+
+
+
 }

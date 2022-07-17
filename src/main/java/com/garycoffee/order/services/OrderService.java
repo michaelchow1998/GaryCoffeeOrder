@@ -120,4 +120,9 @@ public class OrderService {
         Order order = orderRepo.getOrderById(Id);
         return order;
     }
+
+    public List<Order> getOrderByPhone(String phone){
+        List<Order> orderList = orderRepo.getOrdersByPhone(phone);
+        return orderList;
+    }
 }
