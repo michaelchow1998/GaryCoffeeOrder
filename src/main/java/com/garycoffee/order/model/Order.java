@@ -15,8 +15,7 @@ public class Order {
     @Id
     private String id;
 
-    @JsonProperty("user_id")
-    private Integer userId;
+    private String phone;
 
     @JsonProperty("staff_id")
     private Integer staffId;

@@ -11,11 +11,13 @@ import java.util.List;
 @Setter
 public class CreateOrderRequest {
 
-    @JsonProperty("user_id")
-    private Integer userId;
+    private String phone;
 
     @JsonProperty("staff_id")
     private Integer staffId;
+
+    @JsonProperty("is_user_buy")
+    private Boolean isUserBuy;
 
     @NotEmpty
     @JsonProperty("buy_list")

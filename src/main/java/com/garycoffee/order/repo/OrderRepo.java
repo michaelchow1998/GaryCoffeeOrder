@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderRepo extends MongoRepository<Order, String> {
 
-    List<Order> getOrdersByUserId(Integer userId);
+    List<Order> getOrdersByPhone(String phone);
 
     List<Order> getOrdersByStaffId(Integer staffId);
 
