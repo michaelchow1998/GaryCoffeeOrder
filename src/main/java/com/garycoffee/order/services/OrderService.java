@@ -93,8 +93,17 @@ public class OrderService {
                 order.setTotalAmount(totalAmount);
                 order.setCreateDate(new Date());
                 order.setOrderItemList(orderItemList);
+            }else {
+                log.warn("not enough money");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
-
+        }else{
+            //set up order
+            order.setPhone(createOrderRequest.getPhone());
+            order.setStaffId(createOrderRequest.getStaffId());
+            order.setTotalAmount(totalAmount);
+            order.setCreateDate(new Date());
+            order.setOrderItemList(orderItemList);
         }
         log.info("save order");
         return orderRepo.insert(order);
