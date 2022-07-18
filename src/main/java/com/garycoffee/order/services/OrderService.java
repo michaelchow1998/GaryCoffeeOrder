@@ -69,20 +69,78 @@ public class OrderService {
             orderItemList.add(orderItem);
         }
         if(createOrderRequest.getIsUserBuy().equals(true)){
+            //Get Account Balance
             String uri = "http://localhost:8070/api/v1/accounts/" +createOrderRequest.getPhone();
-            Integer accountBalance = webClientBuilder.build()
+            Account account = webClientBuilder.build()
                     .get()
                     .uri(uri)
                     .retrieve()
-                    .bodyToMono(Integer.class)
+                    .bodyToMono(Account.class)
                     .block();
 
+            //Check Account Balance
+            assert account != null;
+            if(account.getAccountBalance() > totalAmount){
 
-            if(accountBalance>totalAmount){
                 WebClientRequestAccount webClientRequestAccount = new WebClientRequestAccount();
                 webClientRequestAccount.setPhone(createOrderRequest.getPhone());
-                webClientRequestAccount.setAmount(totalAmount);
 
+                //Use Integral
+                if(createOrderRequest.getIsUseIntegral().equals(true)){
+
+                    //Total Amount bigger than Integral Balance / 50
+                    if(totalAmount > account.getIntegralBalance()/50){
+
+                        totalAmount = totalAmount - account.getIntegralBalance()/50;
+
+                        WebClientRequestAccount webClientRequestIntegral = new WebClientRequestAccount();
+                        webClientRequestIntegral.setPhone(createOrderRequest.getPhone());
+                        webClientRequestIntegral.setAmount(0);
+
+
+                        //Reduce Integral Balance money
+                        webClientBuilder.build()
+                                .put()
+                                .uri("http://localhost:8070/api/v1/accounts/reduceIntegral")
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                                .body(Mono.just(webClientRequestIntegral), WebClientRequestAccount.class)
+                                .retrieve()
+                                .bodyToMono(Account.class)
+                                .block();
+
+                        //Set Reduce Balance number
+                        webClientRequestAccount.setAmount(totalAmount);
+                    }else{
+                        //Total Amount less than Integral Balance /20
+                        Integer leaveIntegral = (account.getIntegralBalance()/50 - totalAmount) * 50;
+
+                        totalAmount = 0;
+
+                        WebClientRequestAccount webClientRequestIntegral = new WebClientRequestAccount();
+                        webClientRequestIntegral.setPhone(createOrderRequest.getPhone());
+                        webClientRequestIntegral.setAmount(leaveIntegral);
+
+
+                        //Reduce Integral Balance money
+                        webClientBuilder.build()
+                                .put()
+                                .uri("http://localhost:8070/api/v1/accounts/reduceIntegral")
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                                .body(Mono.just(webClientRequestIntegral), WebClientRequestAccount.class)
+                                .retrieve()
+                                .bodyToMono(Account.class)
+                                .block();
+
+                        //Set Reduce Balance number
+                        webClientRequestAccount.setAmount(totalAmount);
+                    }
+                }else{
+                    //Set Reduce Balance number
+                    webClientRequestAccount.setAmount(totalAmount);
+                }
+
+
+                //Reduce Balance money
                 webClientBuilder.build()
                         .put()
                         .uri("http://localhost:8070/api/v1/accounts/reduceBalance")
@@ -92,10 +150,23 @@ public class OrderService {
                         .bodyToMono(Account.class)
                         .block();
 
+                //Add Integral Balance
+                webClientBuilder.build()
+                        .put()
+                        .uri("http://localhost:8070/api/v1/accounts/addIntegral")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .body(Mono.just(webClientRequestAccount), WebClientRequestAccount.class)
+                        .retrieve()
+                        .bodyToMono(Account.class)
+                        .block();
+
+
                 //set up order
                 order.setPhone(createOrderRequest.getPhone());
                 order.setStaffId(createOrderRequest.getStaffId());
                 order.setTotalAmount(totalAmount);
+                order.setIsUserBuy(createOrderRequest.getIsUserBuy());
+                order.setIsUseIntegral(createOrderRequest.getIsUseIntegral());
                 order.setCreateDate(new Date());
                 order.setOrderItemList(orderItemList);
             }else {
@@ -107,6 +178,8 @@ public class OrderService {
             order.setPhone(createOrderRequest.getPhone());
             order.setStaffId(createOrderRequest.getStaffId());
             order.setTotalAmount(totalAmount);
+            order.setIsUserBuy(createOrderRequest.getIsUserBuy());
+            order.setIsUseIntegral(createOrderRequest.getIsUseIntegral());
             order.setCreateDate(new Date());
             order.setOrderItemList(orderItemList);
         }

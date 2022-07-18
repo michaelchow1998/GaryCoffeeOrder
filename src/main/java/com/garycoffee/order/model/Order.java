@@ -22,6 +22,13 @@ public class Order {
 
     private Integer totalAmount;
 
+    @JsonProperty("is_user_buy")
+    private Boolean isUserBuy;
+
+    @JsonProperty("is_use_integral")
+    private Boolean isUseIntegral;
+
+
     private Date createDate;
 
     @JsonProperty("item_list")
