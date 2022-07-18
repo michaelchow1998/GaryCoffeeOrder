@@ -1,6 +1,7 @@
 package com.garycoffee.order.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.garycoffee.order.dto.CreateOrderRequest;
 import com.garycoffee.order.model.Order;
 import com.garycoffee.order.model.Product;
@@ -8,6 +9,7 @@ import com.garycoffee.order.services.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -40,11 +42,14 @@ public class OrderController {
         return ResponseEntity.ok().body(orderList);
     }
 
-    //Get All Orders by Phone
     @GetMapping("/search")
-    public ResponseEntity<List<Order>> fetchOrdersByPhone(@RequestParam(value = "phone") String phone){
-        log.info(phone);
-        List<Order> orderList = orderService.getOrderByPhone(phone);
+    public ResponseEntity<Page<Order>> fetchOrdersWithPage(
+            @RequestParam (value = "phone") String phone,
+            @RequestParam (value = "page", defaultValue = "1") Integer page
+
+            ) throws JsonProcessingException {
+
+        Page<Order> orderList = orderService.getAllOrderWithPage(phone,page);
 
         return ResponseEntity.ok().body(orderList);
     }

@@ -1,5 +1,7 @@
 package com.garycoffee.order.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.garycoffee.order.dto.BuyItem;
 import com.garycoffee.order.dto.CreateOrderRequest;
 import com.garycoffee.order.dto.WebClientRequestAccount;
@@ -12,6 +14,9 @@ import com.garycoffee.order.repo.ProductRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -116,13 +121,23 @@ public class OrderService {
         return orderList;
     }
 
+    public Page<Order> getAllOrderWithPage(String phone,Integer page) throws JsonProcessingException {
+        int size = 50;
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Order> pageResult = orderRepo.getOrdersByPhone(phone,pageable);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(pageResult.getContent());
+
+        return pageResult;
+    }
+
+
+
     public Order getOrderById(String Id){
         Order order = orderRepo.getOrderById(Id);
         return order;
     }
 
-    public List<Order> getOrderByPhone(String phone){
-        List<Order> orderList = orderRepo.getOrdersByPhone(phone);
-        return orderList;
-    }
 }
