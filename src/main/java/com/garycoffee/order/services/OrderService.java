@@ -63,6 +63,10 @@ public class OrderService {
             orderItem.setAmount(amount);
             orderItemList.add(orderItem);
         }
+
+        //set originAmount
+        order.setOriginAmount(totalAmount);
+
         //Reduce Balance number when User
         if(createOrderRequest.getIsUserBuy().equals(true)){
 
@@ -83,10 +87,11 @@ public class OrderService {
                         totalAmount = totalAmount - account.getIntegralBalance()/50;
 
                         //Reduce Integral number
-                        webClientRequest.reduceIntegral(createOrderRequest.getPhone(),0);
+                        webClientRequest.reduceIntegral(createOrderRequest.getPhone(),account.getIntegralBalance());
 
                         //Reduce Balance number
                         webClientRequest.reduceBalance(createOrderRequest.getPhone(),totalAmount);
+                        order.setTotalAmount(totalAmount);
                     }else{
                         //Total Amount less than Integral Balance /20
                         Integer leaveIntegral = (account.getIntegralBalance()/50 - totalAmount) * 50;
@@ -98,42 +103,35 @@ public class OrderService {
 
                         //Reduce Balance number
                         webClientRequest.reduceBalance(createOrderRequest.getPhone(),totalAmount);
+                        order.setTotalAmount(totalAmount);
                     }
                 }
                 //Not Use Integral
                 else{
                     //Reduce Balance number when not User
                     webClientRequest.reduceBalance(createOrderRequest.getPhone(),totalAmount);
+                    order.setTotalAmount(totalAmount);
                 }
 
                 //Add Integral Balance
                 webClientRequest.addIntegral(createOrderRequest.getPhone(),
-                        totalAmount
+                        order.getOriginAmount()
                 );
 
-
-                //set up order
-                order.setPhone(createOrderRequest.getPhone());
-                order.setStaffId(createOrderRequest.getStaffId());
-                order.setTotalAmount(totalAmount);
-                order.setIsUserBuy(createOrderRequest.getIsUserBuy());
-                order.setIsUseIntegral(createOrderRequest.getIsUseIntegral());
-                order.setCreateDate(new Date());
-                order.setOrderItemList(orderItemList);
             }else {
                 log.warn("not enough money");
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
-        }else{
-            //set up order
-            order.setPhone(createOrderRequest.getPhone());
-            order.setStaffId(createOrderRequest.getStaffId());
-            order.setTotalAmount(totalAmount);
-            order.setIsUserBuy(createOrderRequest.getIsUserBuy());
-            order.setIsUseIntegral(createOrderRequest.getIsUseIntegral());
-            order.setCreateDate(new Date());
-            order.setOrderItemList(orderItemList);
         }
+
+        //set up order
+        order.setPhone(createOrderRequest.getPhone());
+        order.setStaffId(createOrderRequest.getStaffId());
+        order.setIsUserBuy(createOrderRequest.getIsUserBuy());
+        order.setIsUseIntegral(createOrderRequest.getIsUseIntegral());
+        order.setCreateDate(new Date());
+        order.setOrderItemList(orderItemList);
+
         log.info("save order");
         return orderRepo.insert(order);
 

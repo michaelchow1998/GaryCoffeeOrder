@@ -20,6 +20,8 @@ public class Order {
     @JsonProperty("staff_id")
     private Integer staffId;
 
+    private Integer originAmount;
+
     private Integer totalAmount;
 
     @JsonProperty("is_user_buy")
