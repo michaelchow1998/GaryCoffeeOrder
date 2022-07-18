@@ -1,7 +1,5 @@
 package com.garycoffee.order.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.garycoffee.order.dto.BuyItem;
 import com.garycoffee.order.dto.CreateOrderRequest;
 import com.garycoffee.order.dto.WebClientRequestAccount;
@@ -16,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,7 +22,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -188,29 +187,27 @@ public class OrderService {
 
     }
 
-
     public List<Order> getAllOrder(){
-        List<Order> orderList = orderRepo.findAll();
-        return orderList;
+        return orderRepo.findAll();
     }
 
-    public Page<Order> getAllOrderWithPage(String phone,Integer page) throws JsonProcessingException {
+    public Page<Order> getAllOrderWithPage(String phone,Integer page) {
         int size = 50;
         PageRequest pageable = PageRequest.of(page, size);
-        Page<Order> pageResult = orderRepo.getOrdersByPhone(phone,pageable);
 
-
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = mapper.writeValueAsString(pageResult.getContent());
-
-        return pageResult;
+        //pageResult
+        return orderRepo.getOrdersByPhone(phone,pageable);
     }
 
+    public Page<Order> getOrderByStaffId(Integer staffId,Integer page){
+        int size = 50;
+        PageRequest pageable = PageRequest.of(page, size);
 
-
+        //pageResult
+        return  orderRepo.getOrdersByStaffId(staffId,pageable);
+    }
     public Order getOrderById(String Id){
-        Order order = orderRepo.getOrderById(Id);
-        return order;
+        return orderRepo.getOrderById(Id);
     }
 
 }

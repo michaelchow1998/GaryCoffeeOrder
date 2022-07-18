@@ -11,9 +11,11 @@ import java.util.List;
 public interface OrderRepo extends MongoRepository<Order, String> {
 
 
-    List<Order> getOrdersByStaffId(Integer staffId);
+
 
     Page<Order> getOrdersByPhone(String phone,Pageable pageable);
+
+    Page<Order> getOrdersByStaffId(Integer staffId,Pageable pageable);
 
     Order getOrderById(String id);
 }

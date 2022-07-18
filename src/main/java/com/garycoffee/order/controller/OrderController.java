@@ -44,15 +44,31 @@ public class OrderController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<Order>> fetchOrdersWithPage(
-            @RequestParam (value = "phone") String phone,
+            @RequestParam (value = "phone", defaultValue = "", required = false) String phone,
+            @RequestParam (value = "staffId", defaultValue = "0",required = false) Integer staffId,
             @RequestParam (value = "page", defaultValue = "1") Integer page
+            ){
+        log.info("phone: {}", phone);
+        log.info("phone state: {}",!phone.isBlank());
+        log.info("staffId: {}", staffId);
+        log.info("staffId state: {}", !staffId.equals(0));
+        if(!phone.isBlank() | !staffId.equals(0)){
+            if (!phone.isBlank()) {
+                Page<Order> orderList = orderService.getAllOrderWithPage(phone, page);
+                return ResponseEntity.ok().body(orderList);
 
-            ) throws JsonProcessingException {
+            }
+            if (!staffId.equals(0)) {
+                Page<Order> orderList = orderService.getOrderByStaffId(staffId, page);
+                return ResponseEntity.ok().body(orderList);
+            }
+        }else {
+            throw new RuntimeException("param format worng");
+        }
 
-        Page<Order> orderList = orderService.getAllOrderWithPage(phone,page);
-
-        return ResponseEntity.ok().body(orderList);
+        return null;
     }
+
 
     //Get Order by id
     @GetMapping("/{id}")
