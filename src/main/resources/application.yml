@@ -1,0 +1,8 @@
+server:
+    port: $PORT
+#server:
+#    port: 8090
+spring:
+    data:
+        mongodb:
+            uri: mongodb+srv://root:zx6666662@garycoffeeorders.tv0yd.mongodb.net/GaryCoffeeOrders
