@@ -1,10 +1,8 @@
 package com.garycoffee.order.WebClientRequest;
 
-import com.garycoffee.order.dto.CreateOrderRequest;
 import com.garycoffee.order.dto.WebClientRequestAccount;
 import com.garycoffee.order.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -18,7 +16,7 @@ public class WebClientRequest {
     private WebClient.Builder webClientBuilder;
 
     public Account checkAccountBalance(String phone){
-        String uri = "http://localhost:8070/api/v1/accounts/" + phone;
+        String uri = "https://gary-coffee-account.herokuapp.com/api/v1/accounts/" + phone;
         Account account = webClientBuilder.build()
                 .get()
                 .uri(uri)
@@ -38,7 +36,7 @@ public class WebClientRequest {
 
         webClientBuilder.build()
                 .put()
-                .uri("http://localhost:8070/api/v1/accounts/addIntegral")
+                .uri("https://gary-coffee-account.herokuapp.com/api/v1/accounts/addIntegral")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(Mono.just(webClientRequest), WebClientRequestAccount.class)
                 .retrieve()
@@ -53,7 +51,7 @@ public class WebClientRequest {
 
         webClientBuilder.build()
                 .put()
-                .uri("http://localhost:8070/api/v1/accounts/reduceBalance")
+                .uri("https://gary-coffee-account.herokuapp.com/api/v1/accounts/reduceBalance")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(Mono.just(webClientRequest), WebClientRequestAccount.class)
                 .retrieve()
@@ -68,7 +66,7 @@ public class WebClientRequest {
 
         webClientBuilder.build()
                 .put()
-                .uri("http://localhost:8070/api/v1/accounts/reduceIntegral")
+                .uri("https://gary-coffee-account.herokuapp.com/api/v1/accounts/reduceIntegral")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(Mono.just(webClientRequest), WebClientRequestAccount.class)
                 .retrieve()
