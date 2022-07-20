@@ -63,7 +63,7 @@ public class OrderController {
                 return ResponseEntity.ok().body(orderList);
             }
         }else {
-            throw new RuntimeException("param format worng");
+            throw new RuntimeException("param format wrong");
         }
 
         return null;
