@@ -1,7 +1,9 @@
 package com.garycoffee.order.services;
 
+import com.garycoffee.order.WebClientRequest.ProductLogWebClientRequest;
 import com.garycoffee.order.WebClientRequest.UserLogWebClientRequest;
 import com.garycoffee.order.WebClientRequest.WebClientRequest;
+import com.garycoffee.order.WebClientRequest.dto.RequestLogProduct;
 import com.garycoffee.order.WebClientRequest.dto.RequestLogUser;
 import com.garycoffee.order.WebClientRequest.dto.TransactionType;
 import com.garycoffee.order.dto.BuyItem;
@@ -21,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,17 +33,20 @@ import java.util.List;
 @Slf4j
 public class OrderService {
 
-    @Autowired
+    @Resource
     private WebClientRequest webClientRequest;
 
-    @Autowired
+    @Resource
     private OrderRepo orderRepo;
 
-    @Autowired
+    @Resource
     private ProductRepo productRepo;
 
-    @Autowired
+    @Resource
     private UserLogWebClientRequest userLogWebClientRequest;
+
+    @Resource
+    private ProductLogWebClientRequest productLogWebClientRequest;
 
     public Order createOrder(CreateOrderRequest createOrderRequest) {
         int totalAmount = 0;
@@ -63,6 +69,16 @@ public class OrderService {
             int amount = buyItem.getQuantity() * product.getPrice();
             totalAmount = totalAmount + amount;
 
+            //Product log
+            productLogWebClientRequest.createProductLog(
+                    new RequestLogProduct(
+                            createOrderRequest.getStaffId(),
+                            buyItem.getProductShortName(),
+                            TransactionType.Reduce,
+                            buyItem.getQuantity()
+                    ));
+
+            //set OrderItem
             OrderItem orderItem = new OrderItem();
             orderItem.setProductShortName(buyItem.getProductShortName());
             orderItem.setQuantity(buyItem.getQuantity());
