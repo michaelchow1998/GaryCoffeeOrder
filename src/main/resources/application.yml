@@ -6,3 +6,6 @@ spring:
     data:
         mongodb:
             uri: mongodb+srv://root:zx6666662@garycoffeeorders.tv0yd.mongodb.net/GaryCoffeeOrders
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
