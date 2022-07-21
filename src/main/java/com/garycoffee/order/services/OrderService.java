@@ -65,15 +65,14 @@ public class OrderService {
             totalAmount = totalAmount + amount;
 
             //Product log
-            String LogMessage =productLogWebClientRequest.createProductLog(
-                    new RequestLogProduct(
-                            createOrderRequest.getStaffId(),
-                            buyItem.getProductShortName(),
-                            TransactionType.Reduce,
-                            buyItem.getQuantity()
-                    ));
+            RequestLogProduct logReq = new RequestLogProduct();
+            logReq.setStaffId(createOrderRequest.getStaffId());
+            logReq.setProductShortName(buyItem.getProductShortName());
+            logReq.setTransactionType(TransactionType.Reduce);
+            logReq.setAmount(buyItem.getQuantity());
 
-            log.info("{}",LogMessage);
+            productLogWebClientRequest.createProductLog(logReq);
+
 
             //set OrderItem
             OrderItem orderItem = new OrderItem();

@@ -57,15 +57,14 @@ public class ProductService {
             productRepo.save(targetProduct);
 
             //log ProductLog
-            String logMessage = productLogWebClientRequest.createProductLog(
-                    new RequestLogProduct(
-                            null,
-                            product.getShortName(),
-                            TransactionType.Increase,
-                            product.getStock()
-                    ));
+            RequestLogProduct logReq = new RequestLogProduct();
+            logReq.setStaffId(null);
+            logReq.setProductShortName(product.getShortName());
+            logReq.setTransactionType(TransactionType.Increase);
+            logReq.setAmount(product.getStock());
 
-            log.info("{}",logMessage);
+            productLogWebClientRequest.createProductLog(logReq);
+
         }
 
     }
