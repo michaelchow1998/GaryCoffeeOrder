@@ -1,5 +1,8 @@
 package com.garycoffee.order.services;
 
+import com.garycoffee.order.WebClientRequest.ProductLogWebClientRequest;
+import com.garycoffee.order.WebClientRequest.dto.RequestLogProduct;
+import com.garycoffee.order.WebClientRequest.dto.TransactionType;
 import com.garycoffee.order.dto.RequestUpdateList;
 import com.garycoffee.order.dto.RequestUpdateProduct;
 import com.garycoffee.order.model.Product;
@@ -9,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,6 +23,8 @@ public class ProductService {
     @Autowired
     private ProductRepo productRepo;
 
+    @Resource
+    private ProductLogWebClientRequest productLogWebClientRequest;
 
     public Product createProduct(Product product){
         productRepo.insert(product);
@@ -49,7 +55,15 @@ public class ProductService {
                 targetProduct.setStock(currentStock+product.getStock());
             }
             productRepo.save(targetProduct);
-            log.info("{} updated",targetProduct.getShortName());
+
+            //log ProductLog
+            productLogWebClientRequest.createProductLog(
+                    new RequestLogProduct(
+                            null,
+                            product.getShortName(),
+                            TransactionType.Increase,
+                            product.getStock()
+                    ));
         }
     }
 
