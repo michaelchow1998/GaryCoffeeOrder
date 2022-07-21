@@ -71,8 +71,8 @@ public class OrderService {
             logReq.setTransactionType(TransactionType.Reduce);
             logReq.setAmount(buyItem.getQuantity());
 
-            productLogWebClientRequest.createProductLog(logReq);
-
+            String logMessage = productLogWebClientRequest.createProductLog(logReq);
+            log.info(logMessage);
 
             //set OrderItem
             OrderItem orderItem = new OrderItem();

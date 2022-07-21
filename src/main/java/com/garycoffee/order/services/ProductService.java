@@ -63,7 +63,8 @@ public class ProductService {
             logReq.setTransactionType(TransactionType.Increase);
             logReq.setAmount(product.getStock());
 
-            productLogWebClientRequest.createProductLog(logReq);
+            String logMessage = productLogWebClientRequest.createProductLog(logReq);
+            log.info(logMessage);
 
         }
 
