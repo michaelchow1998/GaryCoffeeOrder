@@ -48,10 +48,7 @@ public class OrderController {
             @RequestParam (value = "staffId", defaultValue = "0",required = false) Integer staffId,
             @RequestParam (value = "page", defaultValue = "1") Integer page
             ){
-        log.info("phone: {}", phone);
-        log.info("phone state: {}",!phone.isEmpty());
-        log.info("staffId: {}", staffId);
-        log.info("staffId state: {}", !staffId.equals(0));
+
         if(!phone.isEmpty() | !staffId.equals(0)){
             if (!phone.isEmpty()) {
                 Page<Order> orderList = orderService.getAllOrderWithPage(phone, page);

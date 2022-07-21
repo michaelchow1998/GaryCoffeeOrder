@@ -1,6 +1,9 @@
 package com.garycoffee.order.services;
 
+import com.garycoffee.order.WebClientRequest.UserLogWebClientRequest;
 import com.garycoffee.order.WebClientRequest.WebClientRequest;
+import com.garycoffee.order.WebClientRequest.dto.RequestLogUser;
+import com.garycoffee.order.WebClientRequest.dto.TransactionType;
 import com.garycoffee.order.dto.BuyItem;
 import com.garycoffee.order.dto.CreateOrderRequest;
 import com.garycoffee.order.model.Account;
@@ -35,6 +38,9 @@ public class OrderService {
 
     @Autowired
     private ProductRepo productRepo;
+
+    @Autowired
+    private UserLogWebClientRequest userLogWebClientRequest;
 
     public Order createOrder(CreateOrderRequest createOrderRequest) {
         int totalAmount = 0;
@@ -91,6 +97,14 @@ public class OrderService {
 
                         //Reduce Balance number
                         webClientRequest.reduceBalance(createOrderRequest.getPhone(),totalAmount);
+
+                        userLogWebClientRequest.createUserLog(
+                                new RequestLogUser(
+                                        createOrderRequest.getPhone(),
+                                        TransactionType.Reduce,
+                                        createOrderRequest.getPhone() + " Account Balance: reduce " + totalAmount + " $"
+                                        ));
+
                         order.setTotalAmount(totalAmount);
                     }else{
                         //Total Amount less than Integral Balance /20
@@ -103,6 +117,14 @@ public class OrderService {
 
                         //Reduce Balance number
                         webClientRequest.reduceBalance(createOrderRequest.getPhone(),totalAmount);
+
+                        userLogWebClientRequest.createUserLog(
+                                new RequestLogUser(
+                                        createOrderRequest.getPhone(),
+                                        TransactionType.Reduce,
+                                        createOrderRequest.getPhone() + " Account Balance: reduce " + totalAmount + " $"
+                                ));
+
                         order.setTotalAmount(totalAmount);
                     }
                 }
