@@ -57,14 +57,17 @@ public class ProductService {
             productRepo.save(targetProduct);
 
             //log ProductLog
-            productLogWebClientRequest.createProductLog(
+            String logMessage = productLogWebClientRequest.createProductLog(
                     new RequestLogProduct(
                             null,
                             product.getShortName(),
                             TransactionType.Increase,
                             product.getStock()
                     ));
+
+            log.info("{}",logMessage);
         }
+
     }
 
     public void deleteProduct(String shortName){

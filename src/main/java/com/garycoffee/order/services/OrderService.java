@@ -1,10 +1,8 @@
 package com.garycoffee.order.services;
 
 import com.garycoffee.order.WebClientRequest.ProductLogWebClientRequest;
-import com.garycoffee.order.WebClientRequest.UserLogWebClientRequest;
 import com.garycoffee.order.WebClientRequest.WebClientRequest;
 import com.garycoffee.order.WebClientRequest.dto.RequestLogProduct;
-import com.garycoffee.order.WebClientRequest.dto.RequestLogUser;
 import com.garycoffee.order.WebClientRequest.dto.TransactionType;
 import com.garycoffee.order.dto.BuyItem;
 import com.garycoffee.order.dto.CreateOrderRequest;
@@ -16,7 +14,6 @@ import com.garycoffee.order.repo.OrderRepo;
 import com.garycoffee.order.repo.ProductRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -42,8 +39,6 @@ public class OrderService {
     @Resource
     private ProductRepo productRepo;
 
-    @Resource
-    private UserLogWebClientRequest userLogWebClientRequest;
 
     @Resource
     private ProductLogWebClientRequest productLogWebClientRequest;
@@ -70,13 +65,15 @@ public class OrderService {
             totalAmount = totalAmount + amount;
 
             //Product log
-            productLogWebClientRequest.createProductLog(
+            String LogMessage =productLogWebClientRequest.createProductLog(
                     new RequestLogProduct(
                             createOrderRequest.getStaffId(),
                             buyItem.getProductShortName(),
                             TransactionType.Reduce,
                             buyItem.getQuantity()
                     ));
+
+            log.info("{}",LogMessage);
 
             //set OrderItem
             OrderItem orderItem = new OrderItem();
@@ -114,12 +111,6 @@ public class OrderService {
                         //Reduce Balance number
                         webClientRequest.reduceBalance(createOrderRequest.getPhone(),totalAmount);
 
-                        userLogWebClientRequest.createUserLog(
-                                new RequestLogUser(
-                                        createOrderRequest.getPhone(),
-                                        TransactionType.Reduce,
-                                        createOrderRequest.getPhone() + " Account Balance: reduce " + totalAmount + " $"
-                                        ));
 
                         order.setTotalAmount(totalAmount);
                     }else{
@@ -134,12 +125,6 @@ public class OrderService {
                         //Reduce Balance number
                         webClientRequest.reduceBalance(createOrderRequest.getPhone(),totalAmount);
 
-                        userLogWebClientRequest.createUserLog(
-                                new RequestLogUser(
-                                        createOrderRequest.getPhone(),
-                                        TransactionType.Reduce,
-                                        createOrderRequest.getPhone() + " Account Balance: reduce " + totalAmount + " $"
-                                ));
 
                         order.setTotalAmount(totalAmount);
                     }
