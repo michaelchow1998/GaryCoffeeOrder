@@ -6,6 +6,9 @@ import com.garycoffee.order.WebClientRequest.dto.RequestLogProduct;
 import com.garycoffee.order.WebClientRequest.dto.TransactionType;
 import com.garycoffee.order.dto.BuyItem;
 import com.garycoffee.order.dto.CreateOrderRequest;
+import com.garycoffee.order.exception.BalanceNotEnoughException;
+import com.garycoffee.order.exception.NotFoundException;
+import com.garycoffee.order.exception.StockNotEnoughException;
 import com.garycoffee.order.model.Account;
 import com.garycoffee.order.model.Order;
 import com.garycoffee.order.model.OrderItem;
@@ -53,9 +56,9 @@ public class OrderService {
             Product product = productRepo.findProductByShortName(buyItem.getProductShortName());
 
             if(product == null){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new NotFoundException("Can't find the product");
             }else if(product.getStock() < buyItem.getQuantity()){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new StockNotEnoughException(product.getProductName()+": have not enough to stock to sell.");
             }
 
             product.setStock(product.getStock() - buyItem.getQuantity());
@@ -141,8 +144,8 @@ public class OrderService {
                 );
 
             }else {
-                log.warn("not enough money");
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new BalanceNotEnoughException(
+                        createOrderRequest.getPhone() +": have not enough money to buy those products");
             }
         }
 
