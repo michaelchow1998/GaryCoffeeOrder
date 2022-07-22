@@ -3,6 +3,8 @@ package com.garycoffee.order.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.garycoffee.order.dto.CreateOrderRequest;
+import com.garycoffee.order.exception.BalanceNotEnoughException;
+import com.garycoffee.order.exception.StockNotEnoughException;
 import com.garycoffee.order.model.Order;
 import com.garycoffee.order.model.Product;
 import com.garycoffee.order.services.OrderService;
@@ -28,9 +30,21 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody CreateOrderRequest req){
-        Order targetOrder = orderService.createOrder(req);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/orders").toUriString());
-        return ResponseEntity.created(uri).body(targetOrder);
+        try{
+            Order targetOrder = orderService.createOrder(req);
+            URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/orders").toUriString());
+            return ResponseEntity.created(uri).body(targetOrder);
+        }catch(BalanceNotEnoughException e){
+            throw new BalanceNotEnoughException(e.getMessage());
+        }catch (StockNotEnoughException e){
+            throw new StockNotEnoughException(e.getMessage());
+        }
+
+
+
+
+
+
     }
 
     //Get All Orders
