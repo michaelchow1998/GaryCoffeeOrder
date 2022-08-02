@@ -70,6 +70,31 @@ public class ProductService {
 
     }
 
+    public void updateProduct(String shortName,RequestUpdateProduct requestUpdateProduct){
+
+            Product targetProduct = productRepo.findProductByShortName(shortName);
+            if(requestUpdateProduct.getPrice() !=null){
+                targetProduct.setPrice(requestUpdateProduct.getPrice());
+            }
+            if(requestUpdateProduct.getStock() !=null){
+                Integer currentStock = targetProduct.getStock();
+                targetProduct.setStock(currentStock+requestUpdateProduct.getStock());
+            }
+            productRepo.save(targetProduct);
+
+            //log ProductLog
+            RequestLogProduct logReq = new RequestLogProduct();
+            logReq.setStaffId(null);
+            logReq.setProductShortName(requestUpdateProduct.getShortName());
+            logReq.setTransactionType(TransactionType.Increase);
+            logReq.setAmount(requestUpdateProduct.getStock());
+
+            String logMessage = productLogWebClientRequest.createProductLog(logReq);
+            log.info(logMessage);
+
+
+    }
+
     public void deleteProduct(String shortName){
             Product product = productRepo.findProductByShortName(shortName);
             log.info("product: {} deleted", product.getShortName());

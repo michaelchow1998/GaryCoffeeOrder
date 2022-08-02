@@ -1,6 +1,7 @@
 package com.garycoffee.order.controller;
 
 import com.garycoffee.order.dto.RequestUpdateList;
+import com.garycoffee.order.dto.RequestUpdateProduct;
 import com.garycoffee.order.model.Product;
 import com.garycoffee.order.services.ProductService;
 import lombok.AllArgsConstructor;
@@ -50,13 +51,25 @@ public class ProductController {
 
     //Update a List of product
     @PutMapping
-    public ResponseEntity<List<Product>> refillProduct(
+    public ResponseEntity<List<Product>> refillProducts(
             @RequestBody RequestUpdateList requestUpdateList
     ){
         productService.updateAllProducts(requestUpdateList);
         List<Product> productList = productService.getAllProduct();
         return ResponseEntity.ok().body(productList);
     }
+
+    //Update a List of product
+    @PutMapping("/{shortName}")
+    public ResponseEntity<Product> refillProduct(
+            @PathVariable String shortName,
+            @RequestBody RequestUpdateProduct requestUpdateProduct
+    ){
+        productService.updateProduct(shortName, requestUpdateProduct);
+        Product product = productService.getProductByShortName(requestUpdateProduct.getShortName());
+        return ResponseEntity.ok().body(product);
+    }
+
 
     @DeleteMapping("/{shortName}")
     public ResponseEntity<String> deleteProduct(@PathVariable String shortName){
