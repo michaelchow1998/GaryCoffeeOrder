@@ -3,7 +3,6 @@ package com.garycoffee.order.services;
 import com.garycoffee.order.WebClientRequest.ProductLogWebClientRequest;
 import com.garycoffee.order.WebClientRequest.WebClientRequest;
 import com.garycoffee.order.WebClientRequest.dto.RequestLogProduct;
-import com.garycoffee.order.WebClientRequest.dto.ResponsePage;
 import com.garycoffee.order.WebClientRequest.dto.TransactionType;
 import com.garycoffee.order.dto.BuyItem;
 import com.garycoffee.order.dto.CreateOrderRequest;
@@ -20,9 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -167,35 +164,23 @@ public class OrderService {
         return orderRepo.findAll();
     }
 
-    public ResponsePage getAllOrderWithPage(String phone,Integer page) {
+    public Page<Order> getAllOrderWithPage(String phone,Integer page) {
         int size = 50;
         PageRequest pageable = PageRequest.of(page, size);
 
         //pageResult
-        return pageToResponsePage(orderRepo.getOrdersByPhone(phone,pageable));
+        return orderRepo.getOrdersByPhone(phone,pageable);
     }
 
-    public ResponsePage getOrderByStaffId(Integer staffId,Integer page){
+    public Page<Order> getOrderByStaffId(Integer staffId,Integer page){
         int size = 50;
         PageRequest pageable = PageRequest.of(page, size);
 
         //pageResult
-        return pageToResponsePage(orderRepo.getOrdersByStaffId(staffId,pageable));
+        return orderRepo.getOrdersByStaffId(staffId,pageable);
     }
     public Order getOrderById(String Id){
         return orderRepo.getOrderById(Id);
     }
 
-
-    public ResponsePage pageToResponsePage(Page<Order> orderPage){
-        ResponsePage responsePage = new ResponsePage();
-        responsePage.setContent(orderPage.getContent());
-        responsePage.setTotalElements(orderPage.getTotalElements());
-        responsePage.setTotalPages(orderPage.getTotalPages());
-        responsePage.setLast(orderPage.isLast());
-        responsePage.setFirst(orderPage.isFirst());
-        responsePage.setCurrentPage(orderPage.getNumber());
-        responsePage.setSize(orderPage.getSize());
-        return responsePage;
-    }
 }
