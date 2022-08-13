@@ -2,6 +2,7 @@ package com.garycoffee.order.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.garycoffee.order.WebClientRequest.dto.ResponsePage;
 import com.garycoffee.order.dto.CreateOrderRequest;
 import com.garycoffee.order.exception.BalanceNotEnoughException;
 import com.garycoffee.order.exception.StockNotEnoughException;
@@ -57,7 +58,7 @@ public class OrderController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<Order>> fetchOrdersWithPage(
+    public ResponseEntity<ResponsePage> fetchOrdersWithPage(
             @RequestParam (value = "phone", defaultValue = "", required = false) String phone,
             @RequestParam (value = "staffId", defaultValue = "0",required = false) Integer staffId,
             @RequestParam (value = "page", defaultValue = "1") Integer page
@@ -65,12 +66,12 @@ public class OrderController {
 
         if(!phone.isEmpty() | !staffId.equals(0)){
             if (!phone.isEmpty()) {
-                Page<Order> orderList = orderService.getAllOrderWithPage(phone, page);
+                ResponsePage orderList = orderService.getAllOrderWithPage(phone, page);
                 return ResponseEntity.ok().body(orderList);
 
             }
             if (!staffId.equals(0)) {
-                Page<Order> orderList = orderService.getOrderByStaffId(staffId, page);
+                ResponsePage orderList = orderService.getOrderByStaffId(staffId, page);
                 return ResponseEntity.ok().body(orderList);
             }
         }else {
